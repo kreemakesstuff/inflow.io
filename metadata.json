@@ -1,0 +1,8 @@
+{
+  "name": "inflow.io",
+  "description": "The ultimate AI-powered YouTube Shorts automation studio. Brainstorm, script, and generate full-production shorts in seconds with Gemini.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}
