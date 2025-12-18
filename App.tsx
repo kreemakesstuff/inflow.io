@@ -1,5 +1,6 @@
 
 import React, { useState, useEffect, useRef } from 'react';
+import localforage from 'localforage';
 import { 
   Zap, 
   Search, 
@@ -39,14 +40,30 @@ const App: React.FC = () => {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const playbackInterval = useRef<number | null>(null);
 
-  // Persistence
+  // Persistence via IndexedDB (localforage)
   useEffect(() => {
-    const saved = localStorage.getItem('inflow_projects');
-    if (saved) setProjects(JSON.parse(saved));
+    const loadProjects = async () => {
+      try {
+        const saved = await localforage.getItem<Project[]>('inflow_projects_v2');
+        if (saved) setProjects(saved);
+      } catch (err) {
+        console.error("Failed to load projects from storage", err);
+      }
+    };
+    loadProjects();
   }, []);
 
   useEffect(() => {
-    localStorage.setItem('inflow_projects', JSON.stringify(projects));
+    const saveProjects = async () => {
+      try {
+        await localforage.setItem('inflow_projects_v2', projects);
+      } catch (err) {
+        console.error("Failed to save projects to storage", err);
+      }
+    };
+    if (projects.length > 0) {
+      saveProjects();
+    }
   }, [projects]);
 
   // Reset playback when project changes
@@ -148,14 +165,14 @@ const App: React.FC = () => {
       const finalProject: Project = {
         ...currentProject,
         visuals,
-        audioData: audioUrl, // Now a blob URL from our service
+        audioData: audioUrl, 
         status: 'ready'
       };
 
       setCurrentProject(finalProject);
-      setProjects([finalProject, ...projects]);
+      setProjects((prev) => [finalProject, ...prev]);
       setCurrentStep(ProjectStep.REVIEW);
-      setIsPlaying(true); // Start playback automatically
+      setIsPlaying(true); 
     } catch (e) {
       console.error(e);
       alert('Generation encountered an issue. Please try again.');
@@ -165,9 +182,11 @@ const App: React.FC = () => {
     }
   };
 
-  const deleteProject = (id: string, e: React.MouseEvent) => {
+  const deleteProject = async (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    setProjects(projects.filter(p => p.id !== id));
+    const updated = projects.filter(p => p.id !== id);
+    setProjects(updated);
+    await localforage.setItem('inflow_projects_v2', updated);
   };
 
   return (
@@ -228,7 +247,7 @@ const App: React.FC = () => {
                 <div className="h-full accent-gradient w-[65%]"></div>
               </div>
             </div>
-            <p className="text-[10px] text-center text-zinc-600 uppercase tracking-widest font-bold">Version 2.4.0 (Stable)</p>
+            <p className="text-[10px] text-center text-zinc-600 uppercase tracking-widest font-bold">Version 2.5.0 (Storage Optimized)</p>
           </div>
         </div>
       </aside>
