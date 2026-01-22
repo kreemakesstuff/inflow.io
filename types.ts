@@ -2,8 +2,7 @@
 export enum ProjectStep {
   IDEATION = 'IDEATION',
   SCRIPTING = 'SCRIPTING',
-  GENERATING = 'GENERATING',
-  REVIEW = 'REVIEW'
+  NOTE = 'NOTE'
 }
 
 export interface VideoIdea {
@@ -15,24 +14,17 @@ export interface VideoIdea {
 
 export interface ScriptSegment {
   id: string;
-  time: string;
+  time: string; // Kept for pacing
   text: string;
-  visualPrompt: string;
-}
-
-export interface ProjectVisual {
-  url: string;
-  segmentId: string;
-  isGenerating: boolean;
+  visualPrompt: string; // Kept as "Imagery Note"
 }
 
 export interface Project {
   id: string;
+  title: string;
   niche: string;
   idea: VideoIdea;
   script: ScriptSegment[];
-  audioData?: string; // base64 pcm/wav
-  visuals: ProjectVisual[];
   createdAt: number;
-  status: 'draft' | 'ready' | 'exported';
+  lastModified: number;
 }
