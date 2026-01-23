@@ -4,42 +4,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>inflow.io - Viral Script Studio</title>
+    <title>inflow.io - Minimal Studio</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-primary: #050505;
-            --bg-secondary: #0a0a0a;
-            --text-primary: #ffffff;
-            --text-secondary: #a1a1aa;
-            --accent: #6366f1; /* Indigo 500 */
+            --bg-primary: #FAFAF9; /* Stone 50 */
+            --bg-secondary: #FFFFFF;
+            --text-primary: #292524; /* Stone 800 */
+            --text-secondary: #78716C; /* Stone 500 */
+            --accent: #57534E; /* Stone 600 */
         }
         body { 
-          font-family: 'Inter', sans-serif; 
+          font-family: 'Outfit', sans-serif; 
           background-color: var(--bg-primary);
           color: var(--text-primary);
         }
         
-        /* Modern Scrollbar */
-        ::-webkit-scrollbar { width: 6px; }
+        /* Minimal Scrollbar */
+        ::-webkit-scrollbar { width: 5px; }
         ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #27272a; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: #3f3f46; }
+        ::-webkit-scrollbar-thumb { background: #E7E5E4; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #D6D3D1; }
 
         .glass-panel {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.7);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            backdrop-filter: blur(12px);
         }
-
-        .accent-text {
-            background: linear-gradient(to right, #818cf8, #c084fc);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
+        
+        /* Smooth Fade In */
+        .fade-enter { opacity: 0; transform: translateY(10px); }
+        .fade-enter-active { opacity: 1; transform: translateY(0); transition: opacity 0.4s ease, transform 0.4s ease; }
     </style>
 <script type="importmap">
 {
@@ -55,7 +53,7 @@
 }
 </script>
 </head>
-<body class="overflow-hidden h-screen selection:bg-indigo-500/30 selection:text-white">
+<body class="overflow-hidden h-screen selection:bg-stone-200 selection:text-stone-900">
     <div id="root"></div>
 </body>
 </html>

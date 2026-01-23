@@ -5,6 +5,12 @@ export enum ProjectStep {
   NOTE = 'NOTE'
 }
 
+export interface User {
+  name: string;
+  email: string;
+  joinedAt: number;
+}
+
 export interface VideoIdea {
   title: string;
   hook: string;
@@ -17,6 +23,7 @@ export interface ScriptSegment {
   time: string; // Kept for pacing
   text: string;
   visualPrompt: string; // Kept as "Imagery Note"
+  visualImage?: string; // Generated image base64
 }
 
 export interface Project {
