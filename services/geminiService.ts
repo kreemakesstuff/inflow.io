@@ -12,8 +12,15 @@ export const brainstormIdeas = async (niche: string): Promise<VideoIdea[]> => {
   const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
   const response = await ai.models.generateContent({
     model: MODELS.FAST,
-    contents: `You are a viral content strategist. Generate 5 high-retention YouTube Shorts ideas for the niche: ${niche}. 
-    Focus on controversial takes, "did you know" facts, or deep curiosity loops.`,
+    contents: `You are a world-class viral strategist for short-form vertical video (TikTok, Instagram Reels, YouTube Shorts). Generate 5 highly viral, high-retention video ideas for the niche: "${niche}".
+    
+    **Viral Criteria (Must Meet All):**
+    1. **Psychological Hook**: Use frameworks like "The Gap Theory" (reveal a knowledge gap), "Negativity Bias" (warn against a mistake), or "Counter-Intuitive Truths" (challenge common beliefs).
+    2. **Visual Potential**: Ideas must be visually demonstrable, not just abstract talking heads.
+    3. **Broad Appeal**: Even within the niche, the specific angle must be interesting to a general audience on any platform.
+    4. **Loopability**: Ideas that naturally loop or encourage re-watching are preferred.
+
+    Focus on high energy, curiosity, and immediate value suitable for the TikTok/Reels/Shorts algorithm.`,
     config: {
       responseMimeType: "application/json",
       responseSchema: {
@@ -21,9 +28,9 @@ export const brainstormIdeas = async (niche: string): Promise<VideoIdea[]> => {
         items: {
           type: Type.OBJECT,
           properties: {
-            title: { type: Type.STRING },
-            hook: { type: Type.STRING, description: 'A scroll-stopping opening line (under 5 seconds)' },
-            description: { type: Type.STRING },
+            title: { type: Type.STRING, description: "Clickbaity but truthful title" },
+            hook: { type: Type.STRING, description: 'A scroll-stopping opening line (under 3 seconds)' },
+            description: { type: Type.STRING, description: "Brief context on why this will go viral on TikTok/Reels/Shorts" },
             suggestedNiche: { type: Type.STRING }
           },
           required: ['title', 'hook', 'description', 'suggestedNiche']
@@ -44,14 +51,21 @@ export const generateScript = async (idea: VideoIdea): Promise<ScriptSegment[]> 
   const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
   const response = await ai.models.generateContent({
     model: MODELS.PRO,
-    contents: `Write a high-retention script for a YouTube Short titled: "${idea.title}".
-    Context: ${idea.description}
-    Hook: "${idea.hook}"
+    contents: `Act as a professional scripter for short-form viral content (TikTok, Reels, Shorts) specializing in >100% retention. Write a script for: "${idea.title}".
     
-    Style: Fast-paced, punchy, conversational. No fluff.
-    Structure: Split into short segments suitable for rapid cuts.
+    **Context:** ${idea.description}
+    **Hook:** "${idea.hook}"
     
-    IMPORTANT: For each segment, provide a highly specific "visualPrompt". This should describe the exact b-roll, animation, or camera angle needed (e.g., "Close up of eye widening", "Fast montage of coding screens", "Slow pan of a sunset").`,
+    **Strict Guidelines for Virality:**
+    1. **Pacing**: Fast. Zero fluff. Every sentence must provide new information or visual stimulation.
+    2. **Structure**:
+       - **0-3s (The Hook)**: Visual + Audio shock. Grab attention immediately.
+       - **3-10s (The Re-Hook)**: Why should they care? What is at stake?
+       - **10-45s (The Meat)**: Rapid-fire value delivery. Use active verbs. 4th-grade reading level.
+       - **45-60s (The Payoff/Loop)**: A satisfying conclusion that can loop back to the start seamlessly if possible.
+    3. **Visual Prompts**: These must be HIGHLY detailed. Describe specific camera angles (e.g., "Low angle shot"), lighting (e.g., "Neon cinematic lighting"), and action. They should be ready for a high-end AI image generator.
+
+    Generate a JSON array of segments.`,
     config: {
       responseMimeType: "application/json",
       responseSchema: {
@@ -61,8 +75,8 @@ export const generateScript = async (idea: VideoIdea): Promise<ScriptSegment[]> 
           properties: {
             id: { type: Type.STRING },
             time: { type: Type.STRING, description: 'Duration in seconds (e.g. "0:00-0:03")' },
-            text: { type: Type.STRING, description: 'Voiceover text' },
-            visualPrompt: { type: Type.STRING, description: 'Detailed visual reference: camera angle, subject, action.' }
+            text: { type: Type.STRING, description: 'Voiceover text (punchy, conversational)' },
+            visualPrompt: { type: Type.STRING, description: 'Cinematic, highly detailed visual description for AI image generation (include lighting, style, camera angle).' }
           },
           required: ['id', 'time', 'text', 'visualPrompt']
         }
@@ -84,7 +98,7 @@ export const generateStoryboardImage = async (visualDescription: string): Promis
     const response = await ai.models.generateContent({
       model: MODELS.IMAGE,
       contents: {
-        parts: [{ text: `Cinematic, photorealistic vertical shot for a video background, 9:16 aspect ratio. ${visualDescription}` }]
+        parts: [{ text: `Cinematic, hyper-realistic 4k vertical image, 9:16 aspect ratio, highly detailed, trending on artstation. Designed for TikTok/Reels background. ${visualDescription}` }]
       },
       config: {
         imageConfig: {

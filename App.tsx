@@ -20,7 +20,8 @@ import {
   Lock,
   Mail,
   Settings,
-  Check
+  Check,
+  UserCircle // Added icon for guest
 } from 'lucide-react';
 import { Project, ProjectStep, VideoIdea, User } from './types';
 import { brainstormIdeas, generateScript, generateStoryboardImage } from './services/geminiService';
@@ -162,6 +163,26 @@ const App: React.FC = () => {
       }
     } catch (err: any) {
       setAuthError(err.message || "An error occurred");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleGuestLogin = async () => {
+    setIsSubmitting(true);
+    setAuthError(null);
+    try {
+      await new Promise(resolve => setTimeout(resolve, 800));
+      const guestUser: User = {
+        name: 'Guest Creative',
+        email: 'guest@inflow.io',
+        joinedAt: Date.now()
+      };
+      await localforage.setItem('inflow_user', guestUser);
+      setUser(guestUser);
+    } catch (e) {
+      console.error(e);
+      setAuthError("Failed to start guest session.");
     } finally {
       setIsSubmitting(false);
     }
@@ -334,11 +355,13 @@ const App: React.FC = () => {
     return (
       <div className="min-h-screen w-full bg-[#FAFAF9] flex flex-col items-center justify-center p-6 font-sans">
         <div className="w-full max-w-md bg-white p-10 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-stone-100 text-center fade-enter-active">
-          <div className="flex justify-center mb-8">
-              <div className="w-16 h-16 rounded-full bg-stone-50 border border-stone-100 flex items-center justify-center text-stone-800 shadow-sm">
+          <div className="flex flex-col items-center justify-center mb-8">
+              <div className="w-16 h-16 rounded-full bg-stone-50 border border-stone-100 flex items-center justify-center text-stone-800 shadow-sm mb-4">
                   <span className="font-bold text-3xl font-serif">i</span>
               </div>
+              <h2 className="text-xl font-bold text-stone-900 tracking-tight">inflow<span className="text-stone-400">.io</span></h2>
           </div>
+
           <h1 className="text-3xl font-bold text-stone-900 mb-2 tracking-tight">
             {authMode === 'LOGIN' ? 'Welcome Back' : 'Create Account'}
           </h1>
@@ -402,10 +425,31 @@ const App: React.FC = () => {
                  disabled={isSubmitting}
                  className="w-full bg-stone-900 text-white font-semibold py-4 rounded-xl hover:bg-stone-800 transition-all active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed shadow-lg shadow-stone-900/10 mt-2 flex items-center justify-center gap-2"
               >
-                 {isSubmitting && <Loader2 size={18} className="animate-spin" />}
+                 {isSubmitting && authMode !== 'LOGIN' && authMode !== 'SIGNUP' ? <Loader2 size={18} className="animate-spin" /> : null}
                  {authMode === 'LOGIN' ? 'Sign In' : 'Create Account'}
               </button>
           </form>
+
+          <div className="mt-6 flex flex-col gap-4">
+             <div className="relative">
+                <div className="absolute inset-0 flex items-center">
+                   <div className="w-full border-t border-stone-200"></div>
+                </div>
+                <div className="relative flex justify-center text-xs uppercase">
+                   <span className="bg-white px-2 text-stone-400 font-medium tracking-wider">Or</span>
+                </div>
+             </div>
+
+             <button 
+               type="button"
+               onClick={handleGuestLogin}
+               disabled={isSubmitting}
+               className="w-full bg-white border border-stone-200 text-stone-600 font-semibold py-3.5 rounded-xl hover:bg-stone-50 hover:border-stone-300 transition-all active:scale-[0.98] flex items-center justify-center gap-2"
+             >
+                <UserCircle size={18} />
+                Continue as Guest
+             </button>
+          </div>
 
           <div className="mt-8 pt-6 border-t border-stone-100 text-sm text-stone-500">
             {authMode === 'LOGIN' ? "Don't have an account?" : "Already have an account?"}
